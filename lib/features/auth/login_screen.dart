@@ -45,11 +45,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       // App Icon
                       Container(
-                        width: 80,
-                        height: 80,
+                        width: 120,
+                        height: 120,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF5B5AF7),
                           borderRadius: BorderRadius.circular(20),
+                          image: const DecorationImage(
+                            image: AssetImage('assets/images/logo.jpg'),
+                            fit: BoxFit.cover,
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: const Color(0xFF5B5AF7).withOpacity(0.3),
@@ -57,11 +60,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               offset: const Offset(0, 8),
                             ),
                           ],
-                        ),
-                        child: const Icon(
-                          Icons.shield,
-                          color: Colors.white,
-                          size: 40,
                         ),
                       ),
                       const SizedBox(height: 24),
