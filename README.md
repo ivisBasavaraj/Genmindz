@@ -1,4 +1,4 @@
-# VisitorGuard - Flutter Mobile Application
+# GenMindz - Flutter Mobile Application
 
 A comprehensive visitor management system with role-based access for Security and Employee users.
 
@@ -101,7 +101,7 @@ After login, choose between:
 ## Key Screens
 
 ### 🔑 Login Screen
-- VisitorGuard logo and branding
+- GenMindz logo and branding
 - Employee ID and password fields
 - Form validation
 - Biometric login option (UI only)
@@ -184,7 +184,7 @@ flutter build ios --release
 ## Support
 
 For technical support or questions:
-- Email: support@visitorguard.com
+- Email: support@GenMindz.com
 - Phone: +1 (555) 123-4567
 
 ## License
