@@ -218,6 +218,6 @@ class ProfileScreen extends ConsumerWidget {
   void _handleSignOut(BuildContext context, WidgetRef ref) {
     // Handle sign out logic
     ref.read(authProvider.notifier).logout();
-    context.go('/');
+    context.goNamed('login');
   }
 }

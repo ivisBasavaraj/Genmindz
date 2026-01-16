@@ -165,6 +165,41 @@ class VisitorDetailsModal extends StatelessWidget {
   }
 
   Widget _buildInfoCard() {
+    return Column(
+      children: [
+        _buildSection('IDENTITY METADATA', [
+          _buildInfoRow(Icons.person, 'Name', visitor.name),
+          _buildInfoRow(Icons.email, 'Email', visitor.email),
+          _buildInfoRow(Icons.phone, 'Phone', visitor.phone),
+          _buildInfoRow(Icons.business, 'Organization Name', visitor.organizationName),
+        ]),
+        const SizedBox(height: 20),
+        _buildSection('ASSIGNMENT & CLEARANCE', [
+          _buildInfoRow(Icons.person_outline, 'Person To Meet', visitor.personToMeet),
+          _buildInfoRow(Icons.apartment, 'Department', visitor.department),
+          _buildInfoRow(Icons.category, 'Visit Type', visitor.visitType),
+          _buildInfoRow(Icons.description, 'Purpose of Visit', visitor.purpose),
+        ]),
+        const SizedBox(height: 20),
+        _buildSection('OPERATIONAL WINDOW', [
+          _buildInfoRow(Icons.calendar_today, 'Visiting Date', 
+            '${visitor.visitingDate.day}/${visitor.visitingDate.month}/${visitor.visitingDate.year}'),
+          _buildInfoRow(Icons.access_time, 'Time From', visitor.timeFrom),
+          _buildInfoRow(Icons.access_time_filled, 'Time To', visitor.timeTo),
+        ]),
+        if (visitor.documentType != null || visitor.documentNumber != null || visitor.personalBelongings != null) ..[
+          const SizedBox(height: 20),
+          _buildSection('FACILITY LOGISTICS', [
+            if (visitor.documentType != null) _buildInfoRow(Icons.badge, 'Document Type', visitor.documentType!),
+            if (visitor.documentNumber != null) _buildInfoRow(Icons.numbers, 'Document Number', visitor.documentNumber!),
+            if (visitor.personalBelongings != null) _buildInfoRow(Icons.work, 'Personal Belongings', visitor.personalBelongings!),
+          ]),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildSection(String title, List<Widget> children) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -175,18 +210,17 @@ class VisitorDetailsModal extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildInfoRow(Icons.email, 'Email', visitor.email),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textSecondary,
+              letterSpacing: 0.5,
+            ),
+          ),
           const SizedBox(height: 16),
-          _buildInfoRow(Icons.phone, 'Phone', visitor.phone),
-          const SizedBox(height: 16),
-          _buildInfoRow(Icons.business, 'Department', visitor.department),
-          const SizedBox(height: 16),
-          _buildInfoRow(Icons.person, 'Host', visitor.host),
-          const SizedBox(height: 16),
-          _buildInfoRow(Icons.description, 'Purpose', visitor.purpose),
-          const SizedBox(height: 16),
-          _buildInfoRow(Icons.schedule, 'Visit Time', 
-            '${visitor.visitTime.day}/${visitor.visitTime.month}/${visitor.visitTime.year} at ${visitor.visitTime.hour}:${visitor.visitTime.minute.toString().padLeft(2, '0')}'),
+          ...children.expand((child) => [child, const SizedBox(height: 16)]).take(children.length * 2 - 1),
         ],
       ),
     );

@@ -193,9 +193,9 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
       ref.read(authProvider.notifier).setUser(user);
       
       if (selectedRole == UserRole.security) {
-        context.go('/scanner');
+        context.goNamed('scanner');
       } else {
-        context.go('/dashboard');
+        context.goNamed('dashboard');
       }
     }
   }

@@ -32,6 +32,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } else if (employeeId == 'EMP001' && password == 'Employee@123') {
       role = UserRole.employee;
       name = 'Employee';
+    } else if (employeeId == 'ADMIN001' && password == 'Admin@123') {
+      role = UserRole.admin;
+      name = 'Venil Mottana';
     }
     
     if (role != null && name != null) {

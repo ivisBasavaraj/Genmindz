@@ -11,7 +11,11 @@ class VisitorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.push('/visitor-detail/${visitor.id}', extra: visitor),
+      onTap: () => context.pushNamed(
+        'visitor-detail',
+        pathParameters: {'id': visitor.id},
+        extra: visitor,
+      ),
       child: Card(
         margin: const EdgeInsets.only(bottom: 12),
         child: Padding(
@@ -57,7 +61,11 @@ class VisitorCard extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'Host: ${visitor.host}',
+          visitor.organizationName,
+          style: const TextStyle(color: Colors.black54, fontSize: 13),
+        ),
+        Text(
+          'Host: ${visitor.personToMeet}',
           style: const TextStyle(color: Colors.black54),
         ),
         Text(
@@ -70,7 +78,7 @@ class VisitorCard extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          _formatTime(visitor.visitTime),
+          '${visitor.timeFrom} - ${visitor.timeTo}',
           style: const TextStyle(
             color: Colors.black54,
             fontSize: 12,

@@ -7,6 +7,8 @@ import '../visitors/visitors_provider.dart';
 import '../auth/auth_provider.dart';
 import '../../models/user.dart';
 import 'widgets/invite_visitor_modal.dart';
+import 'admin_dashboard_screen.dart';
+import 'employer_dashboard_screen.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -35,8 +37,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final user = ref.watch(authProvider).user;
     final visitors = ref.watch(visitorsProvider);
 
-    if (user?.role == UserRole.employee) {
-      return _buildEmployeeDashboard(context, visitors);
+    if (user?.role == UserRole.admin) {
+      return const AdminDashboardScreen();
+    } else if (user?.role == UserRole.employee) {
+      return const EmployerDashboardScreen();
     } else {
       return _buildSecurityDashboard(context, visitors);
     }
@@ -46,31 +50,26 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final todayVisitors = visitors.where((v) => 
       v.visitTime.day == DateTime.now().day).toList();
 
-    return Scaffold(
-      backgroundColor: Colors.grey.shade50,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildEmployeeHeader(),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTabNavigation(),
-                    const SizedBox(height: 20),
-                    if (selectedTab == 'My Visitors') ..._buildMyVisitorsContent(todayVisitors),
-                    if (selectedTab == 'Schedule') ..._buildScheduleContent(todayVisitors),
-                    if (selectedTab == 'Insights') ..._buildInsightsContent(),
-                  ],
-                ),
-              ),
+    return Column(
+      children: [
+        _buildEmployeeHeader(),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildTabNavigation(),
+                const SizedBox(height: 20),
+                if (selectedTab == 'My Visitors') ..._buildMyVisitorsContent(todayVisitors),
+                if (selectedTab == 'Schedule') ..._buildScheduleContent(todayVisitors),
+                if (selectedTab == 'Insights') ..._buildInsightsContent(),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -116,7 +115,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ),
           ),
           IconButton(
-            onPressed: () => context.go('/notifications'),
+            onPressed: () => context.goNamed('notifications'),
             icon: Stack(
               children: [
                 const Icon(Icons.notifications_outlined, color: Colors.white),
@@ -412,7 +411,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   Widget _buildVisitorListCard(Visitor visitor) {
     return GestureDetector(
-      onTap: () => context.push('/visitor-detail/${visitor.id}', extra: visitor),
+      onTap: () => context.pushNamed(
+        'visitor-detail',
+        pathParameters: {'id': visitor.id},
+        extra: visitor,
+      ),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
@@ -487,31 +490,26 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   Widget _buildSecurityDashboard(BuildContext context, List<Visitor> visitors) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade50,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildSecurityHeader(),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildStatsCardsGrid(visitors),
-                    const SizedBox(height: 20),
-                    _buildQRScannerCard(),
-                    const SizedBox(height: 20),
-                    _buildRecentVisitorsSection(_filterVisitors(visitors)),
-                  ],
-                ),
-              ),
+    return Column(
+      children: [
+        _buildSecurityHeader(),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildStatsCardsGrid(visitors),
+                const SizedBox(height: 20),
+                _buildQRScannerCard(),
+                const SizedBox(height: 20),
+                _buildRecentVisitorsSection(_filterVisitors(visitors)),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -557,7 +555,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ),
           ),
           IconButton(
-            onPressed: () => context.go('/notifications'),
+            onPressed: () => context.goNamed('notifications'),
             icon: Stack(
               children: [
                 const Icon(Icons.notifications_outlined, color: Colors.white),
@@ -666,7 +664,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   Widget _buildQRScannerCard() {
     return GestureDetector(
-      onTap: () => context.go('/scanner'),
+      onTap: () => context.goNamed('scanner'),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(20),
@@ -1342,7 +1340,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   void _showVisitorDetails(BuildContext context, Visitor visitor) {
-    context.push('/visitor-detail/${visitor.id}', extra: visitor);
+    context.pushNamed(
+      'visitor-detail',
+      pathParameters: {'id': visitor.id},
+      extra: visitor,
+    );
   }
 
   void _approveVisitor(BuildContext context, Visitor visitor) {
@@ -1384,16 +1386,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   void _navigateToSection(String label) {
     switch (label) {
       case 'Inside':
-        context.go('/visitors?filter=checkedIn');
+        context.goNamed('visitors', queryParameters: {'filter': 'checkedIn'});
         break;
       case 'Pending':
-        context.go('/visitors?filter=pending');
+        context.goNamed('visitors', queryParameters: {'filter': 'pending'});
         break;
       case 'Today':
-        context.go('/visitors?filter=today');
+        context.goNamed('visitors', queryParameters: {'filter': 'today'});
         break;
       case 'Overdue':
-        context.go('/visitors?filter=overstay');
+        context.goNamed('visitors', queryParameters: {'filter': 'overstay'});
         break;
     }
   }
@@ -1764,7 +1766,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   Widget _buildAppointmentCard(Visitor visitor) {
     final isCompleted = visitor.status == VisitorStatus.checkedIn;
     return GestureDetector(
-      onTap: () => context.push('/visitor-detail/${visitor.id}', extra: visitor),
+      onTap: () => context.pushNamed(
+        'visitor-detail',
+        pathParameters: {'id': visitor.id},
+        extra: visitor,
+      ),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),

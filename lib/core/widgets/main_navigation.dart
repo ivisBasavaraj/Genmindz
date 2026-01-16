@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/auth_provider.dart';
 import '../../models/user.dart';
 import '../constants/app_colors.dart';
+import 'app_drawer.dart';
 
 class MainNavigation extends ConsumerWidget {
   final Widget child;
@@ -20,10 +21,59 @@ class MainNavigation extends ConsumerWidget {
     }
 
     return Scaffold(
+      drawer: user.role == UserRole.employee || user.role == UserRole.admin 
+          ? const AppDrawer() 
+          : null,
+      appBar: _buildAppBar(context, user.role),
       body: child,
       bottomNavigationBar: _buildBottomNavigation(context, user.role),
       floatingActionButton: _buildFloatingActionButton(context, user.role),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
+  }
+
+  PreferredSizeWidget? _buildAppBar(BuildContext context, UserRole role) {
+    final location = GoRouterState.of(context).uri.path;
+    final showDrawer = role == UserRole.employee || role == UserRole.admin;
+    
+    // Only show high-fidelity app bar for dashboard, visitor requests, and staff directory
+    if (location != '/dashboard' && location != '/visitor-requests' && location != '/staff-directory') {
+      return null;
+    }
+
+    return AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      leading: showDrawer ? Builder(
+        builder: (context) => IconButton(
+          icon: const Icon(Icons.menu, color: Color(0xFF0F172A)),
+          onPressed: () => Scaffold.of(context).openDrawer(),
+        ),
+      ) : null,
+      title: Text(
+        location == '/dashboard' ? 'My Workspace' : 
+        location == '/visitor-requests' ? 'Visitor Requests' : 'Staff Directory',
+        style: const TextStyle(
+          color: Color(0xFF0F172A),
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      actions: [
+        IconButton(
+          onPressed: () => context.goNamed('notifications'),
+          icon: const Icon(Icons.notifications_none, color: Color(0xFF0F172A)),
+        ),
+        const SizedBox(width: 8),
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: CircleAvatar(
+            radius: 16,
+            backgroundColor: const Color(0xFF4F46E5).withOpacity(0.1),
+            child: const Icon(Icons.grid_view_rounded, size: 16, color: Color(0xFF4F46E5)),
+          ),
+        ),
+      ],
     );
   }
 
@@ -107,19 +157,19 @@ class MainNavigation extends ConsumerWidget {
     switch (label) {
       case 'Home':
         if (role == UserRole.security) {
-          context.go('/scanner');
+          context.goNamed('scanner');
         } else {
-          context.go('/dashboard');
+          context.goNamed('dashboard');
         }
         break;
       case 'Alerts':
-        context.go('/notifications');
+        context.goNamed('notifications');
         break;
       case 'Profile':
-        context.go('/profile');
+        context.goNamed('profile');
         break;
       case 'Exit':
-        context.go('/');
+        context.goNamed('login');
         break;
     }
   }
@@ -144,7 +194,10 @@ class MainNavigation extends ConsumerWidget {
       child: FloatingActionButton(
         onPressed: () {
           if (role == UserRole.security) {
-            context.go('/scanner');
+            context.goNamed('scanner');
+          } else if (role == UserRole.admin) {
+            // Admin specific action - could be quick access to registration form
+            context.goNamed('dashboard');
           } else {
             // Open invite modal for employees
           }
@@ -152,7 +205,11 @@ class MainNavigation extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         child: Icon(
-          role == UserRole.security ? Icons.qr_code_scanner : Icons.person_add,
+          role == UserRole.security 
+              ? Icons.qr_code_scanner 
+              : role == UserRole.admin 
+                  ? Icons.admin_panel_settings
+                  : Icons.person_add,
           color: Colors.white,
           size: 24,
         ),
@@ -192,25 +249,25 @@ class MainNavigation extends ConsumerWidget {
     if (role == UserRole.security) {
       switch (index) {
         case 0:
-          context.go('/dashboard');
+          context.goNamed('dashboard');
           break;
         case 1:
-          context.go('/profile');
+          context.goNamed('profile');
           break;
       }
     } else {
       switch (index) {
         case 0:
-          context.go('/dashboard');
+          context.goNamed('dashboard');
           break;
         case 1:
-          context.go('/visitors');
+          context.goNamed('visitors');
           break;
         case 2:
-          context.go('/notifications');
+          context.goNamed('notifications');
           break;
         case 3:
-          context.go('/profile');
+          context.goNamed('profile');
           break;
       }
     }
