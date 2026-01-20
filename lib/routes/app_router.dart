@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../features/auth/login_screen.dart';
 import '../features/role/role_selection_screen.dart';
+import '../features/role/access_matrix_screen.dart';
 import '../features/scanner/scanner_screen.dart';
 import '../features/visitors/visitors_screen.dart';
 import '../features/visitors/visitor_requests_screen.dart';
@@ -10,6 +11,9 @@ import '../features/visitors/visitor_detail_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
 import '../features/notifications/notifications_screen.dart';
 import '../features/profile/profile_screen.dart';
+import '../features/profile/organization_profile_screen.dart';
+import '../features/settings/system_settings_screen.dart';
+import '../features/audit_log/audit_registry_screen.dart';
 import '../features/gate_access/gate_access_screen.dart';
 import '../features/appointments/appointments_screen.dart';
 import '../features/staff/staff_directory_screen.dart';
@@ -64,6 +68,11 @@ final GoRouter appRouter = GoRouter(
           builder: (context, state) => const ProfileScreen(),
         ),
         GoRoute(
+          path: '/organization-profile',
+          name: 'organization-profile',
+          builder: (context, state) => const OrganizationProfileScreen(),
+        ),
+        GoRoute(
           path: '/appointments',
           name: 'appointments',
           builder: (context, state) => const AppointmentsScreen(),
@@ -81,15 +90,12 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/security-force',
           name: 'security-force',
-          builder: (context, state) => Scaffold(
-            appBar: AppBar(title: const Text('Security Force')),
-            body: const Center(child: Text('Security Force Screen')),
-          ),
+          builder: (context, state) => const SecurityForceScreen(),
         ),
         GoRoute(
           path: '/access-matrix',
           name: 'access-matrix',
-          builder: (context, state) => const Scaffold(body: Center(child: Text('Access Matrix'))),
+          builder: (context, state) => const AccessMatrixScreen(),
         ),
         GoRoute(
           path: '/billing',
@@ -99,12 +105,12 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/settings',
           name: 'settings',
-          builder: (context, state) => const Scaffold(body: Center(child: Text('System Settings'))),
+          builder: (context, state) => const SystemSettingsScreen(),
         ),
         GoRoute(
           path: '/audit-log',
           name: 'audit-log',
-          builder: (context, state) => const Scaffold(body: Center(child: Text('Audit Log'))),
+          builder: (context, state) => const AuditRegistryScreen(),
         ),
         GoRoute(
           path: '/help-desk',

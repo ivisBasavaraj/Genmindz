@@ -36,23 +36,34 @@ class MainNavigation extends ConsumerWidget {
     final location = GoRouterState.of(context).uri.path;
     final showDrawer = role == UserRole.employee || role == UserRole.admin;
     
-    // Only show high-fidelity app bar for dashboard, visitor requests, and staff directory
-    if (location != '/dashboard' && location != '/visitor-requests' && location != '/staff-directory') {
-      return null;
-    }
+    String title = 'GenMindz';
+    if (location == '/dashboard') title = 'My Workspace';
+    else if (location == '/visitor-requests') title = 'Visitor Requests';
+    else if (location == '/staff-directory') title = 'Staff Directory';
+    else if (location == '/security-force') title = 'Security Force';
+    else if (location == '/organization-profile') title = 'Org Profile';
+    else if (location == '/settings') title = 'System Settings';
+    else if (location == '/audit-log') title = 'Audit Log';
+    else if (location == '/access-matrix') title = 'Access Matrix';
+    else if (location == '/appointments') title = 'Appointments';
+    else if (location == '/gate-access') title = 'Gate Access';
+    else if (location == '/scanner') title = 'Scanner';
+    else if (location == '/notifications') title = 'Alerts';
+    else if (location == '/profile') title = 'Profile';
 
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 0,
+      centerTitle: false,
+      leadingWidth: showDrawer ? 56 : 0,
       leading: showDrawer ? Builder(
         builder: (context) => IconButton(
           icon: const Icon(Icons.menu, color: Color(0xFF0F172A)),
           onPressed: () => Scaffold.of(context).openDrawer(),
         ),
-      ) : null,
+      ) : const SizedBox.shrink(),
       title: Text(
-        location == '/dashboard' ? 'My Workspace' : 
-        location == '/visitor-requests' ? 'Visitor Requests' : 'Staff Directory',
+        title,
         style: const TextStyle(
           color: Color(0xFF0F172A),
           fontSize: 18,
@@ -70,7 +81,14 @@ class MainNavigation extends ConsumerWidget {
           child: CircleAvatar(
             radius: 16,
             backgroundColor: const Color(0xFF4F46E5).withOpacity(0.1),
-            child: const Icon(Icons.grid_view_rounded, size: 16, color: Color(0xFF4F46E5)),
+            child: const Text(
+              'VM',
+              style: TextStyle(
+                color: Color(0xFF4F46E5),
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
       ],
